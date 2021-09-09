@@ -1,4 +1,5 @@
 from tensorflow.keras.utils import plot_model, to_categorical
+import tensorflow as tf
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -36,7 +37,7 @@ CLASSES = 3 # カテゴリ数
 DATASIZE = SIZE *  SIZE * 3
 
 class NNModel():
-  def __init__(self,model,catlist,dset = None,type='CNN',resize=None):
+  def __init__(self,model,catlist,dset = None,type='CNN',reshape=None):
       self.model = model # ニューラルネットワークのモデル定義
       Xtrain0,ytrain,Xtest0,ytest = dset # データセット
       self.Xtrain0,self.Xtest0 = Xtrain0,Xtest0
@@ -50,7 +51,7 @@ class NNModel():
       else: # type == 'MLP'フラット入力のネットワークの場合
         self.Xtrain = Xtrain0.reshape(len(Xtrain0),DATASIZE)
         self.Xtest = Xtest0.reshape(len(Xtest0),DATASIZE)
-      if resize != None:
+      if reshape != None:
           self.Xtrain = tf.image.resize(self.Xtrain, resize)
           self.Xtest = tf.image.resize(self.Xtest, resize)
       self.ytrain = ytrain
