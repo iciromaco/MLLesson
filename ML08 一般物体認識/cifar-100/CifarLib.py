@@ -37,16 +37,18 @@ DATASIZE = SIZE *  SIZE * 3
 class NNModel():
   def __init__(self,model,catlist,dset = None,type='CNN'):
       self.model = model # ニューラルネットワークのモデル定義
-      Xtrain,ytrain,Xtest,ytest = dset # データセット
+      Xtrain0,ytrain,Xtest0,ytest = dset # データセット
+      self.Xtrain0,self.Xtest0 = Xtrain0,Xtest0
       self.CATLIST = catlist # カテゴリリスト
       if type == 'CNN': # 畳み込みニューラルネットワークの場合
-        self.Xtrain = Xtrain
-        self.Xtest = Xtest
+        self.Xtrain = Xtrain0
+        self.Xtest = Xtest0
       else: # type == 'MLP'フラット入力のネットワークの場合
-        self.Xtrain = Xtrain.reshape(len(Xtrain),DATASIZE)
-        self.Xtest = Xtest.reshape(len(Xtest),DATASIZE)
+        self.Xtrain = Xtrain0.reshape(len(Xtrain0),DATASIZE)
+        self.Xtest = Xtest0.reshape(len(Xtest0),DATASIZE)
       self.ytrain = ytrain
       self.ytest = ytest
+      self.TrainError,self.TestError = [],[]
   def summary(self):
       self.model.summary()
   def plot(self,fname):
@@ -109,6 +111,34 @@ class NNModel():
         crossT = pd.concat([pd.DataFrame(catlist,columns=['正解カテゴリ']),pd.DataFrame(ct1,columns=catlist)],axis=1)
         crossT = pd.concat([crossT,pd.DataFrame([np.round(1000*crossT[cat][i]/ndata*NCAT)/10 for i,cat in enumerate(catlist)],columns=['正答率'])],axis=1).set_index('正解カテゴリ')
         display(crossT.head())
+        if mode == 'train':
+          self.trainError = Error
+        else:
+          self.testError = Error
+
+  # 誤認識した画像を表示
+  def showErrorImages(self,mode = 'test'):
+      errlist = self.testError if mode == 'test' else self.trainError
+      images = self.Xtest0 if mode == 'test' else self.Xtrain0
+
+      # 認識間違いの表示
+      def showEimg(self,images):
+          last = len(errlist) 
+          plt.figure(figsize=(8,7.5*(math.ceil(last/8))/6),dpi=100)
+          for i in range(last):
+                  plt.subplot((last-1)//8+1,8,i+1)
+                  plt.xticks([])
+                  plt.yticks([])
+                  plt.imshow(images[errlist[i][0]])
+                  plt.title("{}\n →{}".format(CATLIST[errlist[i][1]],CATLIST[errlist[i][2]]),fontsize=6)
+
+      if len(errlist)>0:
+        if len(errlist)>16:
+          print("下に示す例を含め",len(errlist),"枚")
+        samples = [errlist[int(x)] for x in np.linspace(0,len(errlist)-1,16)]
+        showEimg(samples,images=images)
+      else:
+        print("誤認識はありません")
 
 # データ・セットの start 番目から最大100画像分を表示
 def showimages(images, start=0):
