@@ -1,3 +1,4 @@
+
 from tensorflow.keras.utils import plot_model, to_categorical
 import tensorflow as tf
 import numpy as np
@@ -52,8 +53,8 @@ class NNModel():
         self.Xtrain = Xtrain0.reshape(len(Xtrain0),DATASIZE)
         self.Xtest = Xtest0.reshape(len(Xtest0),DATASIZE)
       if reshape != None:
-          self.Xtrain = tf.image.resize(self.Xtrain, resize)
-          self.Xtest = tf.image.resize(self.Xtest, resize)
+          self.Xtrain = tf.image.resize(self.Xtrain, reshape)
+          self.Xtest = tf.image.resize(self.Xtest, reshape)
       self.ytrain = ytrain
       self.ytest = ytest
       self.TrainError,self.TestError = [],[]
