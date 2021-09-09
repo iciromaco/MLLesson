@@ -36,7 +36,7 @@ CLASSES = 3 # カテゴリ数
 DATASIZE = SIZE *  SIZE * 3
 
 class NNModel():
-  def __init__(self,model,catlist,dset = None,type='CNN'):
+  def __init__(self,model,catlist,dset = None,type='CNN',resize=None):
       self.model = model # ニューラルネットワークのモデル定義
       Xtrain0,ytrain,Xtest0,ytest = dset # データセット
       self.Xtrain0,self.Xtest0 = Xtrain0,Xtest0
@@ -44,9 +44,15 @@ class NNModel():
       if type == 'CNN': # 畳み込みニューラルネットワークの場合
         self.Xtrain = Xtrain0
         self.Xtest = Xtest0
+      elif type == 'CNN±1': # 入力が０１ではなく－１、１
+        self.Xtrain = 2*Xtrain0 -1 # Mobile Net は -1～ +1
+        self.Xtest = 2*Xtest0 -1
       else: # type == 'MLP'フラット入力のネットワークの場合
         self.Xtrain = Xtrain0.reshape(len(Xtrain0),DATASIZE)
         self.Xtest = Xtest0.reshape(len(Xtest0),DATASIZE)
+      if resize != None:
+          self.Xtrain = tf.image.resize(self.Xtrain, resize)
+          self.Xtest = tf.image.resize(self.Xtest, resize)
       self.ytrain = ytrain
       self.ytest = ytest
       self.TrainError,self.TestError = [],[]
