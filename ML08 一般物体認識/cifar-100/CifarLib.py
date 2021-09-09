@@ -135,9 +135,10 @@ class NNModel():
                   plt.title("{}\n →{}".format(CATLIST[samples[i][1]],CATLIST[samples[i][2]]),fontsize=6)
 
       if len(errlist)>0:
+        samples = errlist
         if len(errlist)>16:
           print("下に示す例を含め",len(errlist),"枚")
-        samples = [errlist[int(x)] for x in np.linspace(0,len(errlist)-1,16)]
+          samples = [errlist[int(x)] for x in np.linspace(0,len(errlist)-1,16)]
         showEimg(samples)
       else:
         print("誤認識はありません")
