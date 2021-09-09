@@ -131,7 +131,7 @@ class NNModel():
                   plt.xticks([])
                   plt.yticks([])
                   plt.imshow(images[errlist[i][0]])
-                  plt.title("{}\n →{}".format(CATLIST[errlist[i][1]],CATLIST[errlist[i][2]]),fontsize=6)
+                  plt.title("{}\n →{}".format(self.CATLIST[errlist[i][1]],self.CATLIST[errlist[i][2]]),fontsize=6)
 
       if len(errlist)>0:
         if len(errlist)>16:
