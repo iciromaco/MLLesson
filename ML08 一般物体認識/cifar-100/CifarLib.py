@@ -122,22 +122,23 @@ class NNModel():
       errlist = self.testError if mode == 'test' else self.trainError
       images = self.Xtest0 if mode == 'test' else self.Xtrain0
 
+      CATLIST = self.CATLIST
       # 認識間違いの表示
-      def showEimg(self,images):
-          last = len(errlist) 
+      def showEimg(samples):
+          last = len(samples) 
           plt.figure(figsize=(8,7.5*(math.ceil(last/8))/6),dpi=100)
           for i in range(last):
                   plt.subplot((last-1)//8+1,8,i+1)
                   plt.xticks([])
                   plt.yticks([])
-                  plt.imshow(images[errlist[i][0]])
-                  plt.title("{}\n →{}".format(self.CATLIST[errlist[i][1]],self.CATLIST[errlist[i][2]]),fontsize=6)
+                  plt.imshow(images[samples[i][0]])
+                  plt.title("{}\n →{}".format(CATLIST[samples[i][1]],CATLIST[samples[i][2]]),fontsize=6)
 
       if len(errlist)>0:
         if len(errlist)>16:
           print("下に示す例を含め",len(errlist),"枚")
         samples = [errlist[int(x)] for x in np.linspace(0,len(errlist)-1,16)]
-        showEimg(samples,images=images)
+        showEimg(samples)
       else:
         print("誤認識はありません")
 
