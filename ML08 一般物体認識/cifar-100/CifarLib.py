@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import japanize_matplotlib
 from matplotlib import cm
+import math
 from PIL import Image
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping, CSVLogger,TensorBoard
