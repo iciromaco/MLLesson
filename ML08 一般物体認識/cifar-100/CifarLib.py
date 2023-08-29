@@ -61,9 +61,9 @@ class NNModel():
       self.model.summary()
   def plot(self,fname):
       plot_model(self.model,to_file=fname)
-  def compile(self,lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0):
+  def compile(self,lr=0.0001, beta_1=0.9, beta_2=0.999):
       self.model.compile(loss='sparse_categorical_crossentropy',
-          optimizer = Adam(learning_rate=lr, beta_1=beta_1, beta_2=beta_2, epsilon=epsilon, decay=decay),
+          optimizer = Adam(learning_rate=lr, beta_1=beta_1, beta_2=beta_2),
           metrics=['accuracy'])
   def learn(self,withCompile=True,verbose=1,epochs=100):
       if withCompile:
