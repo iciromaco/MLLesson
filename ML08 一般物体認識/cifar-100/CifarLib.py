@@ -71,7 +71,7 @@ class NNModel():
       es = EarlyStopping(monitor='loss', patience=5)   #  訓練用データのロスが改善されなくなったら2エポック後に停止
       tb_cb = TensorBoard(log_dir='tblog', histogram_freq=1, write_graph=True)
       csv_logger = CSVLogger('training.log')
-      self.hist = self.model.fit(self.Xtrain ,self.ytrain,
+      self.hist = self.model.fit(self.Xtrain ,self.ytrain, batch_size=50,
                   epochs=epochs,
                   verbose=verbose,
                   callbacks=[es, csv_logger])
@@ -104,7 +104,7 @@ class NNModel():
           print("\033[1m\033[35m訓練データの認識率\033[0m")
         # 訓練データに対する識別結果
         ndata = len(Xdata) # データ数
-        predictT = self.model.predict(Xdata)
+        predictT = self.model(Xdata, training=False).numpy()
         predictT = [np.argmax(n1)  for n1 in predictT]
         NCAT = len(self.CATLIST) # カテゴリ数
         ct1 = np.zeros((NCAT,NCAT),np.uint16) # 認識結果集計表
@@ -123,7 +123,6 @@ class NNModel():
           self.trainError = Error
         else:
           self.testError = Error
-
   # 誤認識した画像を表示
   def showErrorImages(self,mode = 'test'):
       errlist = self.testError if mode == 'test' else self.trainError
