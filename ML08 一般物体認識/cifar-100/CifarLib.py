@@ -104,7 +104,7 @@ class NNModel():
           print("\033[1m\033[35m訓練データの認識率\033[0m")
         # 訓練データに対する識別結果
         ndata = len(Xdata) # データ数
-        predictT = self.model.predict(Xdata, training=False).numpy()
+        predictT = self.model.predict(Xdata, training=False)
         predictT = [np.argmax(n1)  for n1 in predictT]
         NCAT = len(self.CATLIST) # カテゴリ数
         ct1 = np.zeros((NCAT,NCAT),np.uint16) # 認識結果集計表
