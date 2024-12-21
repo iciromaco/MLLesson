@@ -71,10 +71,11 @@ class NNModel():
       es = EarlyStopping(monitor='loss', patience=5)   #  訓練用データのロスが改善されなくなったら2エポック後に停止
       tb_cb = TensorBoard(log_dir='tblog', histogram_freq=1, write_graph=True)
       csv_logger = CSVLogger('training.log')
-      self.hist = self.model.fit(self.Xtrain ,self.ytrain, batch_size=50,
+      self.hist = self.model.fit(self.Xtrain ,self.ytrain, batch_size=25,
                   epochs=epochs,
                   verbose=verbose,
-                  callbacks=[es, csv_logger])
+                  callbacks=[es, csv_logger],
+                  validation_data=(self.Xtest, self.ytest))
   # 学習過程のグラフ化
   def hplot(self):
       fig, ax1 = plt.subplots()
