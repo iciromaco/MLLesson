@@ -114,7 +114,7 @@ class NNModel():
             ct1[int(ydata[i]),int(predictT[i])] += 1
             if ydata[i] != predictT[i]:
                 Error.append([i,int(ydata[i]),int(predictT[i])])
-        print("誤認識 {0:}/{1:} \n　正答率={2:5.1f}　誤り率＝{3:5.1f} %\n".format(len(Error),len(ydata),100*(ndata-len(Error))/ndata,100*len(Error)/ndata))
+        print("誤認識 {0:}/{1:} \n　正答率={2:5.1f}　誤り率＝{3:5.1f} %\n".format(len(Error),len(ydata),100.0*(ndata-len(Error))/ndata,100.0*len(Error)/ndata))
         print("カテゴリごとの認識結果と正答率")
         catlist = self.CATLIST
         crossT = pd.concat([pd.DataFrame(catlist,columns=['正解カテゴリ']),pd.DataFrame(ct1,columns=catlist)],axis=1)
@@ -186,3 +186,4 @@ def getCatE(X,y,cat):
 # カテゴリの和名 cat の画像だけ抽出する  
 def getCatJ(X,y,cat):
     return getCatN(X,y,word2fcatJ(cat))
+
