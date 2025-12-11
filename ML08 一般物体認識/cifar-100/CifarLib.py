@@ -108,7 +108,7 @@ class NNModel():
         predictT = self.model.predict(Xdata)
         predictT = [np.argmax(n1)  for n1 in predictT]
         NCAT = len(self.CATLIST) # カテゴリ数
-        ct1 = np.zeros((NCAT,NCAT),np.uint16) # 認識結果集計表
+        ct1 = np.zeros((NCAT,NCAT),int) # 認識結果集計表
         Error = []
         for i in range(ndata):
             ct1[int(ydata[i]),int(predictT[i])] += 1
@@ -186,4 +186,5 @@ def getCatE(X,y,cat):
 # カテゴリの和名 cat の画像だけ抽出する  
 def getCatJ(X,y,cat):
     return getCatN(X,y,word2fcatJ(cat))
+
 
