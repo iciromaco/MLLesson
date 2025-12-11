@@ -65,17 +65,25 @@ class NNModel():
       self.model.compile(loss='sparse_categorical_crossentropy',
           optimizer = Adam(learning_rate=lr, beta_1=beta_1, beta_2=beta_2),
           metrics=['accuracy'])
-  def learn(self,withCompile=True,verbose=1,epochs=100):
+  def learn(self, withCompile=True, verbose=0, epochs=100): # verboseのデフォルトを0に推奨
       if withCompile:
-        self.compile()
-      es = EarlyStopping(monitor='loss', patience=5)   #  訓練用データのロスが改善されなくなったら2エポック後に停止
+            self.compile()
+        
+      es = EarlyStopping(monitor='loss', patience=5)
+      # ログが不要ならhistogram_freq=0にするとより軽量になります
       tb_cb = TensorBoard(log_dir='tblog', histogram_freq=1, write_graph=True)
       csv_logger = CSVLogger('training.log')
-      self.hist = self.model.fit(self.Xtrain ,self.ytrain, batch_size=25,
-                  epochs=epochs,
-                  verbose=verbose,
-                  callbacks=[es, csv_logger],
-                  validation_data=(self.Xtest, self.ytest))
+ 
+      # TqdmCallbackを作成（verbose=1でプログレスバー表示）
+      tqdm_cb = TqdmCallback(verbose=1) # <--- 追加
+
+      # Keras標準のログ出力を消すために fit の verbose=0 に固定します
+      # 代わりに callbacks に tqdm_cb を渡します
+      self.hist = self.model.fit(self.Xtrain, self.ytrain, batch_size=25,
+                     epochs=epochs,
+                     verbose=0,  # <--- 重要：Keras標準の出力をOFFにする
+                     callbacks=[es, csv_logger, tqdm_cb], # <--- tqdmを追加
+                     validation_data=(self.Xtest, self.ytest))
   # 学習過程のグラフ化
   def hplot(self):
       fig, ax1 = plt.subplots()
@@ -186,5 +194,6 @@ def getCatE(X,y,cat):
 # カテゴリの和名 cat の画像だけ抽出する  
 def getCatJ(X,y,cat):
     return getCatN(X,y,word2fcatJ(cat))
+
 
 
