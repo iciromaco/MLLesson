@@ -9,6 +9,7 @@ import math
 from PIL import Image
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping, CSVLogger,TensorBoard
+from tqdm.keras import TqdmCallback
 
 labelsJ = np.array(['リンゴ', '観賞魚', '赤ちゃん', 'クマ', 'ビーバー', 'ベッド', '蜂', '甲虫', '自転車', 'ボトル', 
        'ボウル', '男の子', '橋', 'バス', '蝶', 'ラクダ','缶', '城', 'いも虫', 'ウシ', 
@@ -194,6 +195,7 @@ def getCatE(X,y,cat):
 # カテゴリの和名 cat の画像だけ抽出する  
 def getCatJ(X,y,cat):
     return getCatN(X,y,word2fcatJ(cat))
+
 
 
 
