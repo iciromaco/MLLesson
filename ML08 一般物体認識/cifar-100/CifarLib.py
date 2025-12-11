@@ -37,6 +37,22 @@ SIZE = 32
 CLASSES = 3 # カテゴリ数
 DATASIZE = SIZE *  SIZE * 3
 
+# GPU判定
+gpus = tf.config.list_physical_devices('GPU')
+IS_CPU = len(gpus) == 0
+
+# --- 設定の切り替え ---
+if IS_CPU:
+    print("🐢 CPUモード: 高速化設定（XLA + フルバッチ）で実行します")
+    BATCH_SIZE = 300  # 全データを一度に計算（Pythonループ負荷を排除）
+    USE_XLA = True    # コンパイラ最適化ON
+    VAL_FREQ = 10     # 検証は10回に1回だけ
+else:
+    print("🚀 GPUモード: 通常設定で実行します")
+    BATCH_SIZE = 32
+    USE_XLA = False   # GPUならXLAなしでも十分速いことが多い
+    VAL_FREQ = 1
+
 class NNModel():
   def __init__(self,model,catlist,dset = None,type='CNN',reshape=None):
       self.model = model # ニューラルネットワークのモデル定義
@@ -65,7 +81,7 @@ class NNModel():
   def compile(self,lr=0.0001, beta_1=0.9, beta_2=0.999):
       self.model.compile(loss='sparse_categorical_crossentropy',
           optimizer = Adam(learning_rate=lr, beta_1=beta_1, beta_2=beta_2),
-          metrics=['accuracy'])
+          metrics=['accuracy'],jit_compile=USE_XLA)
   def learn(self, withCompile=True, verbose=0, epochs=100): # verboseのデフォルトを0に推奨
       if withCompile:
             self.compile()
@@ -80,11 +96,13 @@ class NNModel():
 
       # Keras標準のログ出力を消すために fit の verbose=0 に固定します
       # 代わりに callbacks に tqdm_cb を渡します
-      self.hist = self.model.fit(self.Xtrain, self.ytrain, batch_size=25,
+      self.hist = self.model.fit(self.Xtrain, self.ytrain, batch_size=BATCH_SIZE,
                      epochs=epochs,
                      verbose=0,  # <--- 重要：Keras標準の出力をOFFにする
                      callbacks=[es, csv_logger, tqdm_cb], # <--- tqdmを追加
+                     validation_freq=VAL_FREQ,
                      validation_data=(self.Xtest, self.ytest))
+         
   # 学習過程のグラフ化
   def hplot(self):
       fig, ax1 = plt.subplots()
@@ -195,6 +213,7 @@ def getCatE(X,y,cat):
 # カテゴリの和名 cat の画像だけ抽出する  
 def getCatJ(X,y,cat):
     return getCatN(X,y,word2fcatJ(cat))
+
 
 
 
