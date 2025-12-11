@@ -44,7 +44,7 @@ IS_CPU = len(gpus) == 0
 # --- 設定の切り替え ---
 if IS_CPU:
     print("🐢 CPUモード: 高速化設定（XLA + フルバッチ）で実行します")
-    BATCH_SIZE = 300  # 全データを一度に計算（Pythonループ負荷を排除）
+    BATCH_SIZE = 64  # 全データを一度に計算（Pythonループ負荷を排除）
     USE_XLA = True    # コンパイラ最適化ON
     VAL_FREQ = 10     # 検証は10回に1回だけ
 else:
@@ -82,7 +82,7 @@ class NNModel():
       self.model.compile(loss='sparse_categorical_crossentropy',
           optimizer = Adam(learning_rate=lr, beta_1=beta_1, beta_2=beta_2),
           metrics=['accuracy'],jit_compile=USE_XLA)
-  def learn(self, withCompile=True, verbose=0, epochs=100): # verboseのデフォルトを0に推奨
+  def learn(self, withCompile=True, verbose=0, epochs=20): # verboseのデフォルトを0に推奨
       if withCompile:
             self.compile()
         
@@ -213,6 +213,7 @@ def getCatE(X,y,cat):
 # カテゴリの和名 cat の画像だけ抽出する  
 def getCatJ(X,y,cat):
     return getCatN(X,y,word2fcatJ(cat))
+
 
 
 
